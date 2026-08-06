@@ -1,0 +1,40 @@
+set_global_assignment -name SYSTEMVERILOG_FILE microbee.sv
+set_global_assignment -name SDC_FILE microbee.sdc
+
+# PLL: single 54.0 MHz output. Everything divides cleanly from it -
+# /4 dot clock, /16 Z80, /32 character clock - so the enables stay aligned.
+set_global_assignment -name QIP_FILE rtl/pll.qip
+
+# The machine
+set_global_assignment -name VERILOG_FILE rtl/microbee_core.v
+set_global_assignment -name VERILOG_FILE rtl/microbee_mem.v
+set_global_assignment -name VERILOG_FILE rtl/microbee_models.v
+set_global_assignment -name VERILOG_FILE rtl/mc6545.v
+set_global_assignment -name VERILOG_FILE rtl/microbee_video.v
+set_global_assignment -name VERILOG_FILE rtl/microbee_kbd.v
+set_global_assignment -name VERILOG_FILE rtl/z80pio.v
+set_global_assignment -name SYSTEMVERILOG_FILE rtl/wd1793.sv
+set_global_assignment -name VERILOG_FILE rtl/microbee_tape.v
+
+# Z80. tv80 rather than T80 because Verilator cannot read T80's VHDL, and the
+# simulation harness is where this core is actually verified. Validated by
+# ZEXDOC 67/67 - see docs/NOTES.md section 13 for what that does and does not prove.
+#
+# TV80_REFRESH is REQUIRED. Without it tv80 omits the R register entirely and
+# `LD A,R` returns a hardcoded 0 (tv80_core.v ~line 754). R is the classic Z80
+# pseudo-random source; Asteroids Plus uses it to advance an entropy pointer,
+# and with R stuck at 0 the pointer never moves and the game hangs (BUG-008).
+# ZEXDOC does not catch this - Z80 test suites deliberately exclude R because
+# its value is not reproducible.
+#
+# Enabling it makes rfsh_n a real signal and asserts mreq_n during the M1
+# refresh cycle. microbee_core.v already ANDs rfsh_n into mem_rd, mem_wr and
+# m1_fetch, so refresh cycles are excluded from the memory decode.
+#
+# MUST match +define+TV80_REFRESH=1 in verilator/Makefile.
+set_global_assignment -name VERILOG_MACRO "TV80_REFRESH=1"
+set_global_assignment -name VERILOG_FILE rtl/tv80/tv80s_ce.v
+set_global_assignment -name VERILOG_FILE rtl/tv80/tv80_core.v
+set_global_assignment -name VERILOG_FILE rtl/tv80/tv80_alu.v
+set_global_assignment -name VERILOG_FILE rtl/tv80/tv80_mcode.v
+set_global_assignment -name VERILOG_FILE rtl/tv80/tv80_reg.v
