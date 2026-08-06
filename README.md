@@ -161,20 +161,20 @@ never change.
 **Linux / macOS:**
 
 ```bash
-cat bn54.rom charrom.bin basic_5.22e.rom bn56.rom > boot0.rom
+cat bn54.rom character_4k.rom basic_5.22e.rom bn56.rom > boot0.rom
 ```
 
 **Windows — Command Prompt.** The `/b` matters: it means binary, and without it
 `copy` stops at the first `Ctrl+Z` byte and silently truncates the bundle.
 
 ```
-copy /b bn54.rom + charrom.bin + basic_5.22e.rom + bn56.rom boot0.rom
+copy /b bn54.rom + character_4k.rom + basic_5.22e.rom + bn56.rom boot0.rom
 ```
 
 | Order | Image | Size | What it is |
 |---|---|---|---|
 | 1 | `bn54.rom` | 8K | 64K CIAB boot ROM — the standard machine |
-| 2 | `charrom.bin` | 4K | character ROM, shared by **every** model |
+| 2 | `character_4k.rom` | 4K | character ROM, shared by **every** model |
 | 3 | `basic_5.22e.rom` | 16K | ROM BASIC — the CIAB's *Load BASIC ROM* option, and the 32K IC's own boot ROM |
 | 4 | `bn56.rom` | 8K | Premium boot ROM — Premium 64K **and** Premium 128K share one image |
 
