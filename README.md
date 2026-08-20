@@ -11,6 +11,8 @@ required.
 The MicroBee was designed and built in Australia by Applied Technology from 1982, and was the machine most Australian schools of the era actually had. Four
 of its models are here, all selectable at run time from one bitstream.
 
+![MicroBee](microbee.png)
+
 ---
 
 ## Supported models
